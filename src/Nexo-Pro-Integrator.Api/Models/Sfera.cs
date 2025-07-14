@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using InsERT.Moria.Klienci;
 using InsERT.Moria.Sfera;
 using InsERT.Mox.Product;
 
@@ -8,14 +7,32 @@ namespace Nexo_Pro_Integrator.Api.Models
 {
     public class Sfera
     {
-        public IEnumerable<string> GetCustomers()
+        public IEnumerable<Customer> GetCustomers()
         {
             using (var sfera = RunSfera())
             {
-                var podmioty = sfera.Podmioty();
-                var customers = podmioty.Dane.Wszystkie().ToList();
+                var customersRef = sfera.Podmioty();
+                var customers = customersRef.Dane.Wszystkie().ToList();
 
-                return customers.Select(x => x.NazwaSkrocona);
+                return customers.Select(x => new Customer()
+                {
+                    Id = x.Id,
+                    Typ = (CustomerType)x.Typ,
+                    ShortName = x.NazwaSkrocona,
+                    CompanyName = x.Firma?.Nazwa,
+                    CompanyNip = x.NIP
+                });
+            }
+        }
+        
+        public IEnumerable<string> GetProducts()
+        {
+            using (var sfera = RunSfera())
+            {
+                var productsRef = sfera.Produkty();
+                var products = productsRef.Dane.Wszystkie().ToList();
+
+                return products.Select(x => x.Nazwa);
             }
         }
         
@@ -39,8 +56,7 @@ namespace Nexo_Pro_Integrator.Api.Models
 
                     if (!podmiotBO.Zapisz())
                     {
-                        podmiotBO.PobierzKomunikatyBledow();
-                        // podmiotBO.WypiszBledy();
+                        var errors = podmiotBO.PobierzKomunikatyBledow();
                     }
                 }
             }
@@ -48,11 +64,12 @@ namespace Nexo_Pro_Integrator.Api.Models
         
         private static Uchwyt RunSfera()
         {
-            var danePolaczenia = DanePolaczenia.Jawne("(local)", "Nexo_Test", true);
-            var mp = new MenedzerPolaczen();
-            var sfera = mp.Polacz(danePolaczenia, ProductId.Subiekt);
+            var connectionData = DanePolaczenia.Jawne("(local)", "Nexo_Test", true);
+            var connectionManager = new MenedzerPolaczen();
             
-            var a = sfera.ZalogujOperatora("Szef", "robocze");
+            var sfera = connectionManager.Polacz(connectionData, ProductId.Subiekt);
+            
+            sfera.ZalogujOperatora("Szef", "robocze");
             
             return sfera;
         }

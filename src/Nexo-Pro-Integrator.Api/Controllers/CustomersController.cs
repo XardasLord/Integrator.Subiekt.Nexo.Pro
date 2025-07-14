@@ -7,7 +7,7 @@ namespace Nexo_Pro_Integrator.Api.Controllers
     public class CustomersController : ApiController
     {
         // GET api/customers
-        public IEnumerable<string> Get()
+        public IEnumerable<Customer> Get()
         {
             var sfera = new Sfera();
             

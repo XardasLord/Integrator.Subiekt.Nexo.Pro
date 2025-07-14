@@ -19,10 +19,6 @@ namespace Nexo_Pro_Integrator.Api.Controllers
         // GET api/values/5
         public string Get(int id)
         {
-            var sfera = new Sfera();
-            
-            sfera.DodajPodmiot();
-            
             return "value";
         }
 
