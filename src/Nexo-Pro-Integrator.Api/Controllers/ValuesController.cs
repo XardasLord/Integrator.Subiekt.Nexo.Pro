@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
-using Nexo_Pro_Integrator.Api.Models;
 
 namespace Nexo_Pro_Integrator.Api.Controllers
 {
