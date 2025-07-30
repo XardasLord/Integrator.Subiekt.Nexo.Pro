@@ -14,7 +14,7 @@ namespace Nexo_Pro_Integrator.Api.Models
                 var customersRef = sfera.Podmioty();
                 var customers = customersRef.Dane.Wszystkie().ToList();
 
-                return customers.Select(x => new Customer()
+                return customers.Select(x => new Customer
                 {
                     Id = x.Id,
                     Typ = (CustomerType)x.Typ,
@@ -25,18 +25,39 @@ namespace Nexo_Pro_Integrator.Api.Models
             }
         }
         
-        public IEnumerable<string> GetProducts()
+        public IEnumerable<Product> GetProducts()
         {
             using (var sfera = RunSfera())
             {
-                var productsRef = sfera.Produkty();
+                var productsRef = sfera.Asortymenty();
                 var products = productsRef.Dane.Wszystkie().ToList();
 
-                return products.Select(x => x.Nazwa);
+                return products.Select(x => new Product
+                {
+                    Id = x.Id,
+                    Symbol = x.Symbol,
+                    Name = x.Nazwa
+                });
             }
         }
         
-        public void DodajPodmiot()
+        public IEnumerable<Order> GetOrders()
+        {
+            using (var sfera = RunSfera())
+            {
+                var ordersRef = sfera.ZamowieniaOdKlientow();
+                var orders = ordersRef.Dane.Wszystkie().ToList();
+
+                return orders.Select(x => new Order
+                {
+                    Id = x.Id,
+                    Symbol = x.Symbol,
+                    Number = x.NumerReferencyjny,
+                });
+            }
+        }
+        
+        public void AddCustomer()
         {
             using (var sfera = RunSfera())
             {
